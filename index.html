@@ -17,7 +17,7 @@
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
         .movie-table {
             width: 100%;
@@ -66,6 +66,13 @@
 </head>
 <body>
     <h1>哪吒2当前票房：加载中...</h1>
+
+    <div id="additional-info" style="text-align: center; margin-bottom: 10px; color: #666; display: flex; justify-content: center; gap: 30px;">
+        <p>人民币票房：<span id="rmb-box-office">加载中...</span> 亿</p>
+        <p>当前美元汇率：<span id="exchange-rate">加载中...</span></p>
+        <p>最后更新时间：<span id="update-time">加载中...</span></p>
+    </div>
+
     <table class="movie-table">
         <thead>
             <tr>
@@ -79,11 +86,18 @@
     </table>
 
     <script>
-        fetch('全球票房.json')
-            .then(response => response.json())
-            .then(data => {
+        Promise.all([
+            fetch('全球票房.json'),
+            fetch('data.json')
+        ])
+        .then(responses => Promise.all(responses.map(res => res.json())))
+            .then(([movieData, additionalData]) => {
+                // 更新附加信息
+                document.getElementById('rmb-box-office').textContent = additionalData.total.toLocaleString();
+                document.getElementById('exchange-rate').textContent = additionalData.exchange_rate;
+                document.getElementById('update-time').textContent = additionalData.update_time;
                 // 将对象转换为数组并排序
-                const movies = Object.entries(data).map(([key, value]) => ({
+                const movies = Object.entries(movieData).map(([key, value]) => ({
                     name: key,
                     ...value
                 }));
@@ -96,7 +110,7 @@
                 
                 // 更新标题
                 document.querySelector('h1').textContent = 
-                    `哪吒2当前票房：$${nezha2.全球票房.toLocaleString()}，排名：${nezha2Rank}`;
+                    `哪吒2当前票房：$${(nezha2.全球票房/100000000).toFixed(2)}亿，全球排名：${nezha2Rank}`;
 
                 const tbody = document.getElementById('movieList');
                 movies.slice(0, 30).forEach((movie, index) => {
@@ -108,7 +122,7 @@
                     row.innerHTML = `
                         <td class="rank">#${index + 1}</td>
                         <td>${movie.中文名}</td>
-                        <td class="box-office">$${movie.全球票房.toLocaleString()}</td>
+                        <td class="box-office">$${(movie.全球票房/100000000).toFixed(2)}亿</td>
                         <td>${movie.上映年份}</td>
                     `;
                     tbody.appendChild(row);
