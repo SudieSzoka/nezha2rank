@@ -7,6 +7,10 @@ on:
   # 可选：允许手动触发工作流
   workflow_dispatch:
 
+# 添加权限配置
+permissions:
+  contents: write
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -37,8 +41,8 @@ jobs:
         git commit -m "自动更新数据 $(date '+%Y-%m-%d %H:%M:%S')" || exit 0
         
     - name: 推送更改
+      # 不需要额外配置 token，GitHub Actions 会自动提供 GITHUB_TOKEN
       uses: ad-m/github-push-action@master
       with:
-        # 不需要额外配置 token，GitHub Actions 会自动提供 GITHUB_TOKEN
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }} 
+        branch: ${{ github.ref }}
