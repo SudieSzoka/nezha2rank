@@ -2,7 +2,7 @@ import urllib.request
 import urllib.error
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta  # 添加 timedelta 导入
 
 # 配置文件路径
 DATA_FILE = "data.json"
@@ -54,8 +54,8 @@ def update_data_file(new_total, exchange_rate):
         data["total"] = "{:.2f}".format(round(new_total/10000, 2))
         if exchange_rate is not None:
             data["exchange_rate"] = "{:.2f}".format(round(1/exchange_rate, 2))
-        data['update_time'] = datetime.now().strftime(
-            '%Y-%m-%d %H:%M:%S')
+        beijing_time = datetime.utcnow() + timedelta(hours=8)
+        data['update_time'] = beijing_time.strftime('%Y-%m-%d %H:%M:%S')
         
         # 保存数据
         with open(DATA_FILE, "w") as f:
