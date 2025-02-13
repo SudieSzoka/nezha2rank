@@ -40,6 +40,9 @@
         .movie-table tr:last-child td {
             border-bottom: none;
         }
+        .movie-table tr:nth-child(even) {
+            background-color: #eaeaea; /* 奇数行背景色 */
+        }
         .movie-table tr:hover {
             background-color: #f8f9fa;
         }
@@ -62,10 +65,21 @@
                 padding: 8px;
             }
         }
+        #download-btn {
+            background-color: #007bff; /* 按钮背景色 */
+            color: white; /* 按钮文字颜色 */
+            border: none; /* 去掉边框 */
+            padding: 10px 15px; /* 内边距 */
+            border-radius: 5px; /* 圆角 */
+            cursor: pointer; /* 鼠标指针样式 */
+        }
+        #download-btn:hover {
+            background-color: #0056b3; /* 悬停时背景色 */
+        }
     </style>
 </head>
 <body>
-    <button id="download-btn" style="margin-bottom: 10px;">下载图片</button>
+    <button id="download-btn" style="margin-bottom: 10px;">下载为图片</button>
     <h1>哪吒2当前票房：加载中...</h1>
 
     <div id="additional-info" style="text-align: center; margin-bottom: 10px; color: #666; display: flex; justify-content: center; gap: 30px;">
