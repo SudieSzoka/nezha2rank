@@ -32,11 +32,53 @@ def send_feishu_alert(message):
 
 def get_exchange_rate():
     """获取人民币兑美元汇率"""
-    url = "https://api.exchangerate-api.com/v4/latest/CNY"
+    # url = "https://api.exchangerate-api.com/v4/latest/CNY"
     try:
-        with urllib.request.urlopen(url) as response:
-            data = json.loads(response.read().decode())
-            return data["rates"]["USD"]
+        timestamp = str(int(time.time() * 1000))
+        # 构造 URL
+        url = "https://webapi.huilv.cc/api/exchange"
+        params = {
+            "num": "100",
+            "chiyouhuobi": "USD",
+            "duihuanhuobi": "CNY",
+            "type": "0",
+            "callback": "jisuanjieguo",
+            "_": timestamp
+        }
+        query_string = urllib.parse.urlencode(params)
+        full_url = f"{url}?{query_string}"
+
+        # 设置请求头
+        headers = {
+            "Accept": "*/*",
+            "Accept-Language": "zh,en-US;q=0.9,en;q=0.8,en-GB;q=0.7",
+            "Connection": "keep-alive",
+            "Cookie": "Hm_lvt_a79aa26e235f42e6eee8234513479b89=1739426135; Hm_lpvt_a79aa26e235f42e6eee8234513479b89=1739426135; HMACCOUNT=A7757467DF16EDCA; _ga=GA1.1.910149293.1739426135; __gads=ID=29b4a1078b7e96a1:T=1739426134:RT=1739426134:S=ALNI_MZDgfW757L7D56dSCpIiv9fgPp3Tw; __gpi=UID=000010378e3eda14:T=1739426134:RT=1739426134:S=ALNI_MZvFGYSQVu6-VQxruVxyi6zgzNpOw; __eoi=ID=b5fa082cdf40606d:T=1739426134:RT=1739426134:S=AA-AfjbWQzpSGr6e4OSETTPh6FP6; FCNEC=%5B%5B%22AKsRol9GM4ZsvBw8Sr86BIeEy3-O854PL_59OxiVgP5I7VFXIgqVAVDcsqIQ42dyX3ERgd55lrw8g5dlB5Nrdm_wuJDbrdQE0bldYIj5388S27XOnQNVIInvKMdmqSsYOSX-7WzFgYzrf_LZozqJbGx0WBVevUMvhw%3D%3D%22%5D%5D; _ga_2SCCMMRLBN=GS1.1.1739426135.1.0.1739426143.0.0.0",
+            "Referer": "https://www.huilv.cc/",
+            "Sec-Fetch-Dest": "script",
+            "Sec-Fetch-Mode": "no-cors",
+            "Sec-Fetch-Site": "same-site",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not=A?Brand";v="24"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": '"Windows"'
+        }
+
+        # 创建请求对象
+        req = urllib.request.Request(full_url, headers=headers)
+
+        # 发送请求并获取响应
+        with urllib.request.urlopen(req) as response:
+            data = response.read().decode("utf-8")  # 读取响应内容并解码为字符串
+
+        # 提取 JSON 部分
+        json_str = data[len("jisuanjieguo("):-2]  # 去掉 JSONP 的外层函数调用
+        result = json.loads(json_str)  # 解析 JSON
+
+        # 提取 `dangqianhuilv` 的值
+        dangqianhuilv = result.get("dangqianhuilv")
+        # print("当前汇率:", dangqianhuilv)
+        return 1/float(dangqianhuilv)
     except Exception as e:
         send_feishu_alert(f"汇率接口请求失败: {str(e)}")
         return None
