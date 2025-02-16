@@ -98,12 +98,15 @@ def update_data_file(new_total, exchange_rate):
         if exchange_rate is not None:
             data["exchange_rate"] = "{:.2f}".format(round(1/exchange_rate, 2))
         beijing_time = datetime.utcnow() + timedelta(hours=8)
-        data['update_time'] = beijing_time.strftime('%Y-%m-%d %H:%M:%S')
-        if beijing_time[:10] == data['nextDay']:
+        beijing_time_str = beijing_time.strftime('%Y-%m-%d %H:%M:%S')
+        data['update_time'] = beijing_time_str
+    
+        if beijing_time_str[:10] == data['nextDay']:
             data['nextDay'] = (beijing_time + timedelta(days=1)).strftime('%Y-%m-%d')
             data['preNum'] = '0'
         
         # 保存数据
+        #print(data['update_time'])
         with open(DATA_FILE, "w") as f:
             json.dump(data, f, indent=4)
 
