@@ -94,7 +94,8 @@ def update_data_file(new_total, exchange_rate):
             data = {"total": 0, "exchange_rate": 0}
         
         # 更新数据
-        data["total"] = "{:.2f}".format(round(new_total+float(data['preNum']), 2))
+        total_num = round(new_total+float(data['preNum']), 2)
+        data["total"] = "{:.2f}".format(total_num)
         exchange_rate_data = round(1/exchange_rate, 2)
         if exchange_rate is not None:
             data["exchange_rate"] = "{:.2f}".format(exchange_rate_data)
@@ -115,7 +116,7 @@ def update_data_file(new_total, exchange_rate):
         file_2 = "全球票房.json"
         with open(file_2, "r",encoding='utf-8') as f:
             data = json.load(f)
-        data['哪吒2：魔童闹海']['全球票房'] = int((new_total+float(data['preNum']))*100000000/exchange_rate_data)
+        data['哪吒2：魔童闹海']['全球票房'] = int(total_num*100000000/exchange_rate_data)
         # 保存数据
         with open(file_2, "w", encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
