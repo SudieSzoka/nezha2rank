@@ -99,6 +99,9 @@ def update_data_file(new_total, exchange_rate):
             data["exchange_rate"] = "{:.2f}".format(round(1/exchange_rate, 2))
         beijing_time = datetime.utcnow() + timedelta(hours=8)
         data['update_time'] = beijing_time.strftime('%Y-%m-%d %H:%M:%S')
+        if beijing_time[:10] == data['nextDay']:
+            data['nextDay'] = (beijing_time + timedelta(days=1)).strftime('%Y-%m-%d')
+            data['preNum'] = '0'
         
         # 保存数据
         with open(DATA_FILE, "w") as f:
@@ -108,7 +111,7 @@ def update_data_file(new_total, exchange_rate):
         file_2 = "全球票房.json"
         with open(file_2, "r",encoding='utf-8') as f:
             data = json.load(f)
-        data['哪吒2：魔童闹海']['全球票房'] = int(new_total*100000000*exchange_rate)
+        data['哪吒2：魔童闹海']['全球票房'] = int((new_total+float(data['preNum']))*100000000*exchange_rate)
         # 保存数据
         with open(file_2, "w", encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
