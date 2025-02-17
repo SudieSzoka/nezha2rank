@@ -128,59 +128,92 @@ def update_data_file(new_total, exchange_rate):
 def main():
     # 获取票房数据
     timestamp = int(time.time() * 1000)
-    url = "https://piaofang.maoyan.com/dashboard-ajax"
     
     try:
-        params = {
-            "orderType": 0,
-            "uuid": "7517ebb7-13b4-4fe0-9476-72b94240f2f8",
-            "timeStamp": timestamp,
-            "User-Agent": "TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMS4wLjAuMCBTYWZhcmkvNTM3LjM2",
-            "index": 563,
-            "channelId": 40009,
-            "sVersion": 2,
-            "signKey": "cdd2683d6b7fc02b618b6020e3de70cf",
-            "WuKongReady": "h5"
-        }
+        # url = "https://piaofang.maoyan.com/dashboard-ajax"
+        # params = {
+        #     "orderType": 0,
+        #     "uuid": "7517ebb7-13b4-4fe0-9476-72b94240f2f8",
+        #     "timeStamp": timestamp,
+        #     "User-Agent": "TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMS4wLjAuMCBTYWZhcmkvNTM3LjM2",
+        #     "index": 563,
+        #     "channelId": 40009,
+        #     "sVersion": 2,
+        #     "signKey": "cdd2683d6b7fc02b618b6020e3de70cf",
+        #     "WuKongReady": "h5"
+        # }
 
+        # headers = {
+        #     "Accept": "application/json, text/plain, */*",
+        #     "Accept-Language": "zh,en-US;q=0.9,en;q=0.8,en-GB;q=0.7",
+        #     "Connection": "keep-alive",
+        #     "Cookie": "_lxsdk_cuid=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8; _lxsdk=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8",
+        #     "Referer": "https://piaofang.maoyan.com/dashboard",
+        #     "Sec-Fetch-Dest": "empty",
+        #     "Sec-Fetch-Mode": "cors",
+        #     "Sec-Fetch-Site": "same-origin",
+        #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        #     "X-FOR-WITH": "l2t4PedxzCv9dfusWCm5mLRqQqg7pvIPnHx2kUdvD8MElRBPmS1nxxN7QOhKPysoKelFKrpEQJvOpdFc5zaMDFRFxeyxJXf8b3RNJbcOYmcc+L/J9sjBKWY8A1nveztFxe8HenKerbrt956/KJfWecgif48+HbQmO7BPLvIpRo8hBeP9Ye6DmGXsxRgW/RPbW0sLJxxLOIAfE/3F+WUJ/K4TLddn3ajpEeOitCqrOCo=",
+        #     "mygsig": '{"m1":"0.0.2","m2":0,"ms1":"55f2ff818bd5393f6224d711e3cac87e","ts":1739412908971}',
+        #     "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not=A Brand";v="24"',
+        #     "sec-ch-ua-mobile": "?0",
+        #     "sec-ch-ua-platform": '"Windows"'
+        # }
+
+        # # 将参数编码为URL查询字符串
+        # query_string = urllib.parse.urlencode(params)
+        # full_url = f"{url}?{query_string}"
+
+        # # 创建请求对象
+        # req = urllib.request.Request(full_url, headers=headers)
+
+        # # 发送请求并获取响应
+        # with urllib.request.urlopen(req) as response:
+        #     response_data = response.read().decode('utf-8')
+        #     data = json.loads(response_data)['movieList']['data']['list']
+
+        # totalRevenue = ''
+        # for dt in data:
+        #     if dt['movieInfo']['movieName'] == '哪吒之魔童闹海':
+        #         totalRevenue = dt['sumBoxDesc']
+        # if totalRevenue != "":
+        url = "https://piaofang.maoyan.com/i/api/rank/globalBox/historyRankList?WuKongReady=h5"
+
+        # 定义请求头
         headers = {
             "Accept": "application/json, text/plain, */*",
             "Accept-Language": "zh,en-US;q=0.9,en;q=0.8,en-GB;q=0.7",
             "Connection": "keep-alive",
-            "Cookie": "_lxsdk_cuid=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8; _lxsdk=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8",
-            "Referer": "https://piaofang.maoyan.com/dashboard",
+            "Referer": "https://piaofang.maoyan.com/i/globalBox/historyRank",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-            "X-FOR-WITH": "l2t4PedxzCv9dfusWCm5mLRqQqg7pvIPnHx2kUdvD8MElRBPmS1nxxN7QOhKPysoKelFKrpEQJvOpdFc5zaMDFRFxeyxJXf8b3RNJbcOYmcc+L/J9sjBKWY8A1nveztFxe8HenKerbrt956/KJfWecgif48+HbQmO7BPLvIpRo8hBeP9Ye6DmGXsxRgW/RPbW0sLJxxLOIAfE/3F+WUJ/K4TLddn3ajpEeOitCqrOCo=",
-            "mygsig": '{"m1":"0.0.2","m2":0,"ms1":"55f2ff818bd5393f6224d711e3cac87e","ts":1739412908971}',
-            "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not=A Brand";v="24"',
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+            "mygsig": '{"m1":"0.0.2","m2":0,"ms1":"ce661086b478ceaaa7131cd8b15f7483","ts":1739775311471}',
+            "sec-ch-ua": '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
             "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"'
+            "sec-ch-ua-platform": '"Windows"',
+            "uid": "464af0640ef928845d61e5ecc888f9a670f803bb",
+            "uuid": "194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8",
+            "Cookie": "_lxsdk_cuid=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8; _lxsdk=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8; uuid=194fd16925bc8-0d099aff7ec1f5-26011851-1fa400-194fd16925bc8; theme=moviepro; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic",
         }
 
-        # 将参数编码为URL查询字符串
-        query_string = urllib.parse.urlencode(params)
-        full_url = f"{url}?{query_string}"
-
         # 创建请求对象
-        req = urllib.request.Request(full_url, headers=headers)
+        req = urllib.request.Request(url, headers=headers)
 
-        # 发送请求并获取响应
+        # 发起请求并获取响应
         with urllib.request.urlopen(req) as response:
-            response_data = response.read().decode('utf-8')
-            data = json.loads(response_data)['movieList']['data']['list']
+            data = response.read().decode("utf-8")
 
-        totalRevenue = ''
-        for dt in data:
-            if dt['movieInfo']['movieName'] == '哪吒之魔童闹海':
-                totalRevenue = dt['sumBoxDesc']
-        if totalRevenue != "":
-            total = float(totalRevenue[:-1])
-            exchange_rate = get_exchange_rate()
-            # print(float(totalRevenue[:-1]))
-            update_data_file(total, exchange_rate)
+        # 解析 JSON 响应
+        result = json.loads(data)['data']['list']
+        for dt in result:
+            if dt['movieName'] == '哪吒之魔童闹海':
+                money = dt['rawValue']/100000000
+        total = money
+        exchange_rate = get_exchange_rate()
+        # print(float(totalRevenue[:-1]))
+        update_data_file(total, exchange_rate)
         # with urllib.request.urlopen(url) as response:
         #     if response.status == 200:
         #         data = json.loads(response.read().decode())
