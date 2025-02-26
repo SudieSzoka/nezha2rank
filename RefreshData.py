@@ -230,7 +230,8 @@ def main():
         #         send_feishu_alert(f"票房接口返回错误状态码: {response.status}")
                 
     except urllib.error.HTTPError as e:
-        send_feishu_alert(f"票房接口HTTP错误: {str(e)}")
+        pass
+        # send_feishu_alert(f"票房接口HTTP错误: {str(e)}")
     except urllib.error.URLError as e:
         send_feishu_alert(f"票房接口网络错误: {str(e)}")
     except Exception as e:
