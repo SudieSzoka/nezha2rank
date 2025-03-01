@@ -6,107 +6,364 @@
     <title>全球电影票房排行榜</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #ff6d00;
+            --text-color: #263238;
+            --light-text: #f5f5f5;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --highlight-bg: #fff8e1;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: 'Microsoft YaHei', sans-serif;
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 30px;
+            background-color: var(--background);
+            color: var(--text-color);
+            line-height: 1.6;
         }
-        h1 {
+        
+        .header {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 40px;
+            position: relative;
         }
+        
+        .header::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .movie-banner {
+            width: 100%;
+            height: 300px;
+            background-image: url('nezha2-banner.webp');
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(26, 35, 126, 0.8), rgba(26, 35, 126, 0.4));
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+        }
+        
+        .banner-content {
+            color: white;
+            max-width: 600px;
+        }
+        
+        .banner-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .banner-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .info-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .info-card {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-card h3 {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .movie-table-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+        
         .movie-table {
             width: 100%;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
         }
+        
         .movie-table th {
-            background-color: #34495e;
-            color: white;
-            padding: 15px;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 18px 24px;
             text-align: left;
+            font-weight: 500;
+            font-size: 1rem;
         }
+        
         .movie-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 1rem;
         }
+        
         .movie-table tr:last-child td {
             border-bottom: none;
         }
+        
         .movie-table tr:nth-child(even) {
-            background-color: #eaeaea; /* 奇数行背景色 */
+            background-color: rgba(0,0,0,0.02);
         }
         .movie-table tr:hover {
-            background-color: #f8f9fa;
+            background-color: rgba(57, 73, 171, 0.05);
         }
         .highlight {
-            background-color: #fff3cd !important;
-            font-weight: bold;
+            background-color: var(--highlight-bg) !important;
+            position: relative;
+            /* 移除相对定位，使用边框代替伪元素 */
+            border-left: 4px solid var(--accent-color);
         }
+        
+        /* 完全移除 .highlight::before 伪元素 */
+        /* .highlight::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--accent-color);
+            z-index: 1;
+        } */
+        
+        /* 移除这些可能导致问题的样式 */
+        /* .highlight td {
+            position: relative;
+            z-index: 2;
+        } */
         .rank {
-            font-weight: bold;
-            color: #e74c3c;
+            font-weight: 700;
+            color: var(--primary-color);
         }
         .box-office {
-            color: #27ae60;
-        }
-        @media (max-width: 768px) {
-            .movie-table {
-                font-size: 14px;
-            }
-            .movie-table th, .movie-table td {
-                padding: 8px;
-            }
-        }
-        #download-btn, #currency-toggle {
-            background-color: #007bff; /* 按钮背景色 */
-            color: white; /* 按钮文字颜色 */
-            border: none; /* 去掉边框 */
-            padding: 10px 15px; /* 内边距 */
-            border-radius: 5px; /* 圆角 */
-            cursor: pointer; /* 鼠标指针样式 */
-            margin-right: 10px;
-        }
-        #download-btn:hover, #currency-toggle:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+            color: var(--accent-color);
+            font-weight: 600;
         }
         .btn-container {
             display: flex;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        #download-btn::before {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>');
+        }
+        
+        #currency-toggle::before {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>');
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .movie-table {
+                font-size: 14px;
+            }
+            
+            .movie-table th, .movie-table td {
+                padding: 12px;
+            }
+            
+            .info-cards {
+                flex-direction: column;
+            }
+            
+            .banner-content h2 {
+                font-size: 1.8rem;
+            }
+            
+            .banner-content p {
+                font-size: 1rem;
+            }
+            
+            .movie-banner {
+                height: 200px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- <div class="header">
+        <h1>全球电影票房排行榜</h1>
+    </div> -->
+    
+    <div class="movie-banner">
+        <div class="banner-overlay">
+            <div class="banner-content">
+                <h2>哪吒2：魔童闹海</h2>
+                <p>一场视觉盛宴，一段传奇旅程。跟随哪吒踏上全新冒险，再创中国动画辉煌。</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-cards">
+        <div class="info-card">
+            <h3>当前票房</h3>
+            <p id="current-boxoffice">加载中...</p>
+        </div>
+        <div class="info-card">
+            <h3>全球排名</h3>
+            <p id="global-rank">加载中...</p>
+        </div>
+        <div class="info-card" style="display: none;">
+            <h3>人民币票房</h3>
+            <p id="rmb-box-office">加载中...</p>
+        </div>
+        <div class="info-card">
+            <h3>当前汇率</h3>
+            <p id="exchange-rate">加载中...</p>
+        </div>
+    </div>
+    
+    <div class="movie-table-container">
+        <table class="movie-table">
+            <thead>
+                <tr>
+                    <th>排名</th>
+                    <th>中文名</th>
+                    <th>全球票房</th>
+                    <th>上映年份</th>
+                </tr>
+            </thead>
+            <tbody id="movieList"></tbody>
+        </table>
+    </div>
+
     <div class="btn-container">
         <button id="download-btn">下载为图片</button>
         <button id="currency-toggle">切换为人民币</button>
     </div>
-    <h1>哪吒2当前票房：加载中...</h1>
-    
-    <div id="additional-info" style="text-align: center; margin-bottom: 10px; color: #666; display: flex; justify-content: center; gap: 30px;">
-        <p>人民币票房：<span id="rmb-box-office">加载中...</span> 亿</p>
-        <p>当前美元汇率：<span id="exchange-rate">加载中...</span></p>
-        <p>最后更新时间：<span id="update-time">加载中...</span></p>
-    </div>
 
-    <table class="movie-table">
-        <thead>
-            <tr>
-                <th>排名</th>
-                <th>中文名</th>
-                <th>全球票房</th>
-                <th>上映年份</th>
-            </tr>
-        </thead>
-        <tbody id="movieList"></tbody>
-    </table>
+    <footer>
+        <p>最后更新时间：<span id="update-time">加载中...</span></p>
+        <p>© 2023 全球电影票房排行榜 | 数据仅供参考</p>
+    </footer>
+    
     <script src="html2canvas.min.js"></script>
     <script>
         let currentCurrency = 'USD'; // 默认显示美元
@@ -157,15 +414,15 @@
             });
             
             // 更新标题中的票房信息
-            const title = document.querySelector('h1');
-            const titleText = title.textContent;
-            const match = titleText.match(/票房：([\$￥])([\d.]+)亿/);
+            const currentBoxOffice = document.getElementById('current-boxoffice');
+            const boxOfficeText = currentBoxOffice.textContent;
+            const match = boxOfficeText.match(/^([\$￥])([\d.]+)亿$/);
             if (match) {
                 const value = parseFloat(match[2]);
                 if (isRMB) {
-                    title.textContent = titleText.replace(/票房：\$[\d.]+亿/, `票房：￥${(value * exchangeRate).toFixed(2)}亿`);
+                    currentBoxOffice.textContent = `￥${(value * exchangeRate).toFixed(2)}亿`;
                 } else {
-                    title.textContent = titleText.replace(/票房：￥[\d.]+亿/, `票房：$${(value / exchangeRate).toFixed(2)}亿`);
+                    currentBoxOffice.textContent = `$${(value / exchangeRate).toFixed(2)}亿`;
                 }
             }
         }
@@ -177,7 +434,7 @@
         .then(responses => Promise.all(responses.map(res => res.json())))
             .then(([movieData, additionalData]) => {
                 // 更新附加信息
-                document.getElementById('rmb-box-office').textContent = additionalData.total.toLocaleString();
+                document.getElementById('rmb-box-office').textContent = `${additionalData.total.toLocaleString()}亿`;
                 document.getElementById('exchange-rate').textContent = additionalData.exchange_rate;
                 document.getElementById('update-time').textContent = additionalData.update_time;
                 // 将汇率转换为数值类型
@@ -196,15 +453,16 @@
                     nezha2Movie.全球票房 = nezha2Total;
                 }
                 
+                // 确保在更新哪吒2票房后重新排序
                 movies.sort((a, b) => b.全球票房 - a.全球票房);
 
                 // 查找哪吒2的信息和排名
                 const nezha2 = movies.find(movie => movie.中文名 === "哪吒2：魔童闹海");
                 const nezha2Rank = movies.findIndex(movie => movie.中文名 === "哪吒2：魔童闹海") + 1;
                 
-                // 更新标题
-                document.querySelector('h1').textContent = 
-                    `哪吒2当前票房：$${(nezha2.全球票房/100000000).toFixed(2)}亿，全球排名：${nezha2Rank}`;
+                // 更新信息卡片
+                document.getElementById('current-boxoffice').textContent = `$${(nezha2.全球票房/100000000).toFixed(2)}亿`;
+                document.getElementById('global-rank').textContent = `#${nezha2Rank}`;
 
                 const tbody = document.getElementById('movieList');
                 movies.slice(0, 30).forEach((movie, index) => {
@@ -221,6 +479,23 @@
                     `;
                     tbody.appendChild(row);
                 });
+                
+                // 添加动画效果
+                setTimeout(() => {
+                    document.querySelectorAll('.info-card').forEach((card, index) => {
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    });
+                    
+                    document.querySelectorAll('.movie-table tr').forEach((row, index) => {
+                        setTimeout(() => {
+                            row.style.opacity = '1';
+                            row.style.transform = 'translateX(0)';
+                        }, 500 + index * 50);
+                    });
+                }, 300);
             })
             .catch(error => console.error('Error:', error));
     </script>
