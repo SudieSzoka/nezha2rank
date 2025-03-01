@@ -65,23 +65,31 @@
                 padding: 8px;
             }
         }
-        #download-btn {
+        #download-btn, #currency-toggle {
             background-color: #007bff; /* 按钮背景色 */
             color: white; /* 按钮文字颜色 */
             border: none; /* 去掉边框 */
             padding: 10px 15px; /* 内边距 */
             border-radius: 5px; /* 圆角 */
             cursor: pointer; /* 鼠标指针样式 */
+            margin-right: 10px;
         }
-        #download-btn:hover {
+        #download-btn:hover, #currency-toggle:hover {
             background-color: #0056b3; /* 悬停时背景色 */
+        }
+        .btn-container {
+            display: flex;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <button id="download-btn" style="margin-bottom: 10px;">下载为图片</button>
+    <div class="btn-container">
+        <button id="download-btn">下载为图片</button>
+        <button id="currency-toggle">切换为人民币</button>
+    </div>
     <h1>哪吒2当前票房：加载中...</h1>
-
+    
     <div id="additional-info" style="text-align: center; margin-bottom: 10px; color: #666; display: flex; justify-content: center; gap: 30px;">
         <p>人民币票房：<span id="rmb-box-office">加载中...</span> 亿</p>
         <p>当前美元汇率：<span id="exchange-rate">加载中...</span></p>
@@ -101,9 +109,14 @@
     </table>
     <script src="html2canvas.min.js"></script>
     <script>
+        let currentCurrency = 'USD'; // 默认显示美元
+        let exchangeRate = 0; // 汇率
+        
         document.getElementById('download-btn').addEventListener('click', function() {
             const button = document.getElementById('download-btn');
+            const currencyToggle = document.getElementById('currency-toggle');
             button.style.display = 'none'; // 隐藏下载按钮
+            currencyToggle.style.display = 'none'; // 隐藏汇率切换按钮
             
             html2canvas(document.body).then(function(canvas) {
                 const link = document.createElement('a');
@@ -112,8 +125,51 @@
                 link.click();
                 
                 button.style.display = 'block'; // 下载后重新显示按钮
+                currencyToggle.style.display = 'block'; // 下载后重新显示汇率切换按钮
             });
         });
+        
+        // 添加汇率切换功能
+        document.getElementById('currency-toggle').addEventListener('click', function() {
+            if (currentCurrency === 'USD') {
+                currentCurrency = 'RMB';
+                this.textContent = '切换为美元';
+                updateCurrencyDisplay(true);
+            } else {
+                currentCurrency = 'USD';
+                this.textContent = '切换为人民币';
+                updateCurrencyDisplay(false);
+            }
+        });
+        
+        // 更新货币显示
+        function updateCurrencyDisplay(isRMB) {
+            const boxOffices = document.querySelectorAll('.box-office');
+            boxOffices.forEach(element => {
+                const value = parseFloat(element.textContent.replace(/[^\d.]/g, ''));
+                if (isRMB) {
+                    // 美元转人民币
+                    element.textContent = `￥${(value * exchangeRate).toFixed(2)}亿`;
+                } else {
+                    // 人民币转美元
+                    element.textContent = `$${(value / exchangeRate).toFixed(2)}亿`;
+                }
+            });
+            
+            // 更新标题中的票房信息
+            const title = document.querySelector('h1');
+            const titleText = title.textContent;
+            const match = titleText.match(/票房：([\$￥])([\d.]+)亿/);
+            if (match) {
+                const value = parseFloat(match[2]);
+                if (isRMB) {
+                    title.textContent = titleText.replace(/票房：\$[\d.]+亿/, `票房：￥${(value * exchangeRate).toFixed(2)}亿`);
+                } else {
+                    title.textContent = titleText.replace(/票房：￥[\d.]+亿/, `票房：$${(value / exchangeRate).toFixed(2)}亿`);
+                }
+            }
+        }
+        
         Promise.all([
             fetch('全球票房.json'),
             fetch('data.json')
@@ -124,15 +180,25 @@
                 document.getElementById('rmb-box-office').textContent = additionalData.total.toLocaleString();
                 document.getElementById('exchange-rate').textContent = additionalData.exchange_rate;
                 document.getElementById('update-time').textContent = additionalData.update_time;
+                // 将汇率转换为数值类型
+                exchangeRate = parseFloat(additionalData.exchange_rate);
+                
                 // 将对象转换为数组并排序
                 const movies = Object.entries(movieData).map(([key, value]) => ({
                     name: key,
                     ...value
                 }));
                 
+                // 更新哪吒2的票房数据（从人民币转为美元）
+                const nezha2Total = parseFloat(additionalData.total) / exchangeRate * 100000000;
+                const nezha2Movie = movies.find(movie => movie.中文名 === "哪吒2：魔童闹海");
+                if (nezha2Movie) {
+                    nezha2Movie.全球票房 = nezha2Total;
+                }
+                
                 movies.sort((a, b) => b.全球票房 - a.全球票房);
 
-                // 查找哪吒2的信息
+                // 查找哪吒2的信息和排名
                 const nezha2 = movies.find(movie => movie.中文名 === "哪吒2：魔童闹海");
                 const nezha2Rank = movies.findIndex(movie => movie.中文名 === "哪吒2：魔童闹海") + 1;
                 
